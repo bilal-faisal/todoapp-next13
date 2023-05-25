@@ -1,11 +1,11 @@
-import { db } from '@vercel/postgres';
+import { MyTodosTable, Todo, db } from '@/lib/drizzle';
+import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-    const client = await db.connect();
     let result;
     try {
-        result = await client.sql`DELETE FROM MyTodos WHERE id=${Number(params.id)}`;
+        result = await db.delete(MyTodosTable).where(eq(MyTodosTable.id, Number(params.id)))
     } catch (err) {
         return NextResponse.json({ message: (err as { message: string }).message }, { status: 404 })
     }
@@ -16,11 +16,10 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-    const client = await db.connect();
     let body = await req.json();
     let result;
     try {
-        result = await client.sql`UPDATE MyTodos SET todos=${body.todo} WHERE id=${Number(params.id)}`;
+        result = await db.update(MyTodosTable).set({ todos: body.todo }).where(eq(MyTodosTable.id, Number(params.id)))
     } catch (err) {
         return NextResponse.json({ message: (err as { message: string }).message }, { status: 404 })
     }
