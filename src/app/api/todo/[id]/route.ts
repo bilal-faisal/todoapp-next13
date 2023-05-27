@@ -1,5 +1,6 @@
-import { MyTodosTable, Todo, db } from '@/lib/drizzle';
 import { eq } from 'drizzle-orm';
+import { db } from '@/lib/drizzle';
+import { MyTodosTable } from '@/db/schema/mytodos';
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {

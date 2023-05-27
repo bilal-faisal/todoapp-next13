@@ -1,5 +1,6 @@
-import { MyTodosTable, Todo, db } from '@/lib/drizzle';
+import { db } from '@/lib/drizzle';
 import { sql } from '@vercel/postgres';
+import { MyTodosTable } from '@/db/schema/mytodos';
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
