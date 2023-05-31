@@ -14,12 +14,22 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    let body = await req.json();
+    let body;
+    let res;
     try {
-        await sql`CREATE TABLE IF NOT EXISTS MyTodos(id SERIAL PRIMARY KEY, todos VARCHAR(255) NOT NULL)`;
-        await db.insert(MyTodosTable).values({ todos: body.todo }).returning();
+        body = await req.json();
     } catch (err) {
         return NextResponse.json({ message: (err as { message: string }).message }, { status: 404 })
     }
-    return NextResponse.json({ message: "Todo has been added Successfully" }, { status: 200 })
+
+    if (!body.todo) {
+        return NextResponse.json({ message: "todo field is required" }, { status: 400 })
+    }
+    try {
+        await sql`CREATE TABLE IF NOT EXISTS MyTodos(id SERIAL PRIMARY KEY, todos VARCHAR(255) NOT NULL)`;
+        res = await db.insert(MyTodosTable).values({ todos: body.todo }).returning();
+    } catch (err) {
+        return NextResponse.json({ message: (err as { message: string }).message }, { status: 404 })
+    }
+    return NextResponse.json({ message: "Todo has been added Successfully", data: res }, { status: 200 })
 }
